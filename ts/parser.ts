@@ -16,8 +16,7 @@
  * 
  * @author Dimitar Tasev 2018
 */
-function Parser() {
-    let self = this;
+export class Parser {
     /**
     * Convert the JSON to HTML. 
     * - Usage:
@@ -72,14 +71,14 @@ function Parser() {
     * ```
     * @param dict Dictionary containing the description of the HTML
     */
-    self.json2html = function (dict: {}): HTMLElement {
-        const [parent_elem, props] = self.getParent(dict);
+    static json2html(dict: {}): HTMLElement {
+        const [parent_elem, props] = Parser.getParent(dict);
 
         Object.keys(props).forEach(function (key) {
             if (key === "children") {
-                props["children"].forEach(element => {
-                    parent_elem.appendChild(self.json2html(element));
-                });
+                for (const p of props["children"]) {
+                    parent_elem.appendChild(Parser.json2html(p));
+                }
             } else {
                 parent_elem[key] = props[key];
             }
@@ -93,7 +92,7 @@ function Parser() {
      * @param dict Dictionary with 1 key, and some values
      * @returns HTMLElement of the key in the dictionary, and all of its values
      */
-    self.getParent = function (dict: {}): [HTMLElement, {}] {
+    private static getParent(dict: {}): [HTMLElement, {}] {
         let parent_elem: HTMLElement, props: {};
         // get the first key in the dictionary
         Object.keys(dict).forEach(function (key) {
@@ -103,63 +102,3 @@ function Parser() {
         return [parent_elem, props];
     }
 }
-
-function myfunc() {
-    alert("I have been summoned");
-}
-
-function main() {
-    const id_in_variable = "apples";
-    const elem = {
-        "div": {
-            "className": "w3-row w3-dark-grey w3-padding issue-margin-bottom",
-            "title": "apples",
-            "children": [{
-                "input": {
-                    "className": "w3-input w3-border",
-                    "id": id_in_variable,
-                    "type": "text",
-                    "placeholder": "New issue title",
-                    "autofocus": true
-                }
-            }, {
-                "textarea": {
-                    "className": "w3-input w3-border",
-                    "id": "Issues.ID_NEW_ISSUE_DETAILS",
-                    "placeholder": "Details (Optional)"
-                }
-            }, {
-                "div": { // options for the issues
-                    "className": "w3-dropdown-click margin-top-1em",
-                    "children": [{
-                        "button": {
-                            "id": "Issues.ID_NEW_ISSUE_MILESTONES_BUTTON",
-                            "className": "w3-button full-width " + "Milestones.CLASS_BUTTON_NO_MILESTONE",
-                            "onclick": "Controls.toggleMilestones()",
-                            "children": [{
-                                "i": {
-                                    "className": "fa fa-map-signs fa-1x",
-                                    "aria-hidden": "true"
-                                }
-                            }]
-                        }
-                    }, {
-                        "div": {
-                            "id": "Issues.ID_NEW_ISSUE_MILESTONES_LIST",
-                            "className": "w3-dropdown-content w3-bar-block w3-border"
-                        }
-                    }]
-                }
-            }, {
-                "button": {
-                    "onclick": myfunc,
-                    "textContent": "click me to call function"
-                }
-            }]
-        }
-    };
-    const parser = new Parser();
-    document.getElementById("test-id").appendChild(parser.json2html(elem));
-}
-
-main();
