@@ -1,7 +1,7 @@
 {
     "name": "html-json",
     "version": "1.0.0",
-    "description": "",
+    "description": "Generate HTML by using JSON to describe it.",
     "main": "index.js",
     "scripts": {
         "test-ts": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && mocha --compilerOptions --require ts-node/register --require jsdom-global/register test/*.test.ts",
