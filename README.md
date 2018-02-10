@@ -51,28 +51,51 @@ becomes
 ```
 
 # Strange Behaviours
-The `"button": {"onclick": myfunc...` bit works, but be ware that in the case of a member function, `this` in the scope of `myfunc` will not refer to its class. For example:
+Setting `onclick` for elements is a pain. The `"button": {"onclick": myfunc...` bit works, but only for globally accessible functions. Usually, this probably will not be the case. For example:
 ```ts
-class MyClass{
+export class MyClass{
     myFunc(){}
+    static myStaticFunc(){}
 }
 
 let mc = new MyClass();
 
 let template = "button": {
-"onclick": mc.myFunc // myFunc loses the MyClass scope
+"onclick": mc.myFunc // doesn't work
 }
 ```
 
-The fix is to wrap the `onclick` with a lambda function like so:
+The fix is to have the onclick in a string, which sadly breaks any automated refactoring, like so:
 
 ```ts
 let template = "button": {
-"onclick": () => mc.myFunc()
+// the object MyClass must be accessible to the `window`
+"onclick": "mc.myFunc()"
 }
 ```
-For more information: https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript#red-flags-for-this
-# Usage
+
+For static functions:
+```ts
+let template = "button": {
+// the object MyClass must be accessible to the `window`
+"onclick": "MyClass.myStaticFunc()"
+}
+```
+
+To add an object to the global `window`, this can be used:
+```ts
+import { MyClass } from '...';
+export class MyClass{
+    myFunc(){}
+    static myStaticFunc(){}
+}
+
+// these two ways work around TypeScript's type checking
+window["MyClass"] = MyClass;
+// also
+(window as any).MyClass = MyClass;
+```
+
 It can be used to create templates, by specifying certain values in the dictionary with variables:
 ```ts
 function createMyAwesomeLink(custom_title:string):HTMLElement {
