@@ -82,7 +82,8 @@ Parser.json2html = function (dict) {
             for (const p of props["children"]) {
                 parent_elem.appendChild(Parser.json2html(p));
             }
-        } else if (key === "onclick") {
+        } else if (key === "onclick" && parent_elem.tagName !== "BUTTON") {
+            // there's no need to do this for buttons, the onclick attribute is present for them
             parent_elem.setAttribute("onclick", props[key]);
         } else {
             parent_elem[key] = props[key];
