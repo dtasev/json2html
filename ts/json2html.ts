@@ -16,7 +16,7 @@
  * 
  * @author Dimitar Tasev 2018
 */
-export class Parser {
+export class J2H {
     /**
     * Convert the JSON to HTML. 
     * - Usage:
@@ -71,23 +71,27 @@ export class Parser {
     * ```
     * @param dict Dictionary containing the description of the HTML
     */
-    static json2html(dict: {}): HTMLElement {
-        const [parent_elem, props] = Parser.getParent(dict);
+    static parse<T = HTMLElement>(dict: {}): T {
+        const [parent, props] = J2H.getParent(dict);
 
-        Object.keys(props).forEach(function (key) {
+        for (const key in props) {
             if (key === "children") {
-                for (const p of props["children"]) {
-                    parent_elem.appendChild(Parser.json2html(p));
+                const children = props["children"];
+                if (children instanceof Array) {
+                    for (const p of children) {
+                        parent.appendChild(J2H.parse(p));
+                    }
+                } else {
+                    parent.appendChild(J2H.parse(children));
                 }
-            } else if (key === "onclick" && parent_elem.tagName !== "BUTTON") {
+            } else if (key === "onclick") {
                 // there's no need to do this for buttons, the onclick attribute is present for them
-                parent_elem.setAttribute("onclick", props[key]);
+                parent.setAttribute("onclick", props[key]);
             } else {
-                parent_elem[key] = props[key];
+                parent[key] = props[key];
             }
-        });
-
-        return parent_elem;
+        }
+        return parent;
     }
 
     /**
@@ -95,13 +99,13 @@ export class Parser {
      * @param dict Dictionary with 1 key, and some values
      * @returns HTMLElement of the key in the dictionary, and all of its values
      */
-    private static getParent(dict: {}): [HTMLElement, {}] {
-        let parent_elem: HTMLElement, props: {};
+    private static getParent<T = HTMLElement>(dict: {}): [T, {}] {
+        let parent, props: {};
         // get the first key in the dictionary
-        Object.keys(dict).forEach(function (key) {
-            parent_elem = document.createElement(key);
+        for (const key in dict) {
+            parent = document.createElement(key);
             props = dict[key];
-        });
-        return [parent_elem, props];
+        }
+        return [parent, props];
     }
 }

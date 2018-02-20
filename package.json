@@ -4,9 +4,7 @@
     "description": "Generate HTML by using JSON to describe it.",
     "main": "index.js",
     "scripts": {
-        "test-ts": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && mocha --compilerOptions --require ts-node/register --require jsdom-global/register test/*.test.ts",
-        "test-js": "mocha --require jsdom-global/register test/*.test.js",
-        "build": ""
+        "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && mocha --compilerOptions --require ts-node/register --require jsdom-global/register test/*.test.ts"
     },
     "author": "Dimitar Tasev",
     "license": "ISC",
