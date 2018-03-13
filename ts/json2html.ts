@@ -85,8 +85,13 @@ export class J2H {
                     parent.appendChild(J2H.parse(children));
                 }
             } else if (key === "onclick") {
-                // there's no need to do this for buttons, the onclick attribute is present for them
-                parent.setAttribute("onclick", props[key]);
+                // if the function was passed as a reference, then assign directly to the onclick attribute
+                if (parent instanceof HTMLButtonElement && typeof props[key] !== "string") {
+                    parent[key] = props[key];
+                } else {
+                    // else the function was passed as a string, i.e. a static function: "MyClass.myfunc()"
+                    parent.setAttribute("onclick", props[key]);
+                }
             } else {
                 parent[key] = props[key];
             }
