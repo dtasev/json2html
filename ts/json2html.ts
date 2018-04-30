@@ -92,6 +92,12 @@ export class J2H {
                     // else the function was passed as a string, i.e. a static function: "MyClass.myfunc()"
                     parent.setAttribute("onclick", props[key]);
                 }
+            } else if (key === "for" && parent instanceof HTMLLabelElement) {
+                parent.setAttribute(key, props[key]);
+            } else if (key.includes("data")) {
+                parent.setAttribute(key, props[key]);
+            } else if (key === "maxlength" && parent instanceof HTMLInputElement) {
+                parent.setAttribute(key, props[key]);
             } else {
                 parent[key] = props[key];
             }
